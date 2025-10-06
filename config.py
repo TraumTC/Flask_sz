@@ -1,0 +1,16 @@
+
+# 数据库配置信息
+HOSTNAME='localhost'
+PORT=3306
+USERNAME='root'
+PASSWORD='123456'
+# 数据库名称
+DATABASE='flask_sz'
+DB_URI=f"mysql+pymysql://{USERNAME}:{PASSWORD}@{HOSTNAME}:{PORT}/{DATABASE}?charset=utf8mb4"
+SQLALCHEMY_DATABASE_URI = DB_URI
+# SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+
+
+
+
