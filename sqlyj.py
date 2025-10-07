@@ -1,8 +1,23 @@
 from sqlalchemy import text
 from exts import db
+import re
 
 def create_ad_begin_type():
     """创建签到触发器"""
+    trigger_name = "ad_begin_type"
+    
+    # 首先检查触发器是否存在
+    try:
+        with db.engine.begin() as connection:
+            check_sql = text(f"SHOW TRIGGERS LIKE '{trigger_name}'")
+            result = connection.execute(check_sql).fetchall()
+            if result:
+                print(f"签到触发器 '{trigger_name}' 已存在，跳过创建")
+                return True
+    except Exception as e:
+        print(f"检查签到触发器是否存在时出错: {e}")
+        # 继续尝试创建，因为在某些MySQL版本中，SHOW TRIGGERS可能有不同的行为
+    
     sql = """
     CREATE TRIGGER ad_begin_type
     BEFORE INSERT ON Attendance
@@ -24,12 +39,30 @@ def create_ad_begin_type():
         print("签到触发器创建成功")
         return True
     except Exception as e:
+        # 检查错误信息是否包含"Trigger already exists"
+        if re.search(r'Trigger already exists', str(e)):
+            print(f"签到触发器 '{trigger_name}' 已存在，跳过创建")
+            return True
         print(f"签到触发器失败: {e}")
         return False
 
 
 def create_ad_over_type():
     """创建签退触发器"""
+    trigger_name = "set_attendance_over_type"
+    
+    # 首先检查触发器是否存在
+    try:
+        with db.engine.begin() as connection:
+            check_sql = text(f"SHOW TRIGGERS LIKE '{trigger_name}'")
+            result = connection.execute(check_sql).fetchall()
+            if result:
+                print(f"签退触发器 '{trigger_name}' 已存在，跳过创建")
+                return True
+    except Exception as e:
+        print(f"检查签退触发器是否存在时出错: {e}")
+        # 继续尝试创建，因为在某些MySQL版本中，SHOW TRIGGERS可能有不同的行为
+    
     sql = """
     CREATE TRIGGER set_attendance_over_type
     BEFORE UPDATE ON Attendance
@@ -51,12 +84,30 @@ def create_ad_over_type():
         print("签退触发器创建成功")
         return True
     except Exception as e:
+        # 检查错误信息是否包含"Trigger already exists"
+        if re.search(r'Trigger already exists', str(e)):
+            print(f"签退触发器 '{trigger_name}' 已存在，跳过创建")
+            return True
         print(f"签退触发器失败: {e}")
         return False
 
 
 def create_leave_defaults():
     """创建请假默认状态触发器"""
+    trigger_name = "set_leave_application_defaults"
+    
+    # 首先检查触发器是否存在
+    try:
+        with db.engine.begin() as connection:
+            check_sql = text(f"SHOW TRIGGERS LIKE '{trigger_name}'")
+            result = connection.execute(check_sql).fetchall()
+            if result:
+                print(f"请假默认状态触发器 '{trigger_name}' 已存在，跳过创建")
+                return True
+    except Exception as e:
+        print(f"检查请假默认状态触发器是否存在时出错: {e}")
+        # 继续尝试创建，因为在某些MySQL版本中，SHOW TRIGGERS可能有不同的行为
+    
     sql = """
     CREATE TRIGGER set_leave_application_defaults
     BEFORE INSERT ON Leave_tb
@@ -74,12 +125,30 @@ def create_leave_defaults():
         print("请假默认状态触发器创建成功")
         return True
     except Exception as e:
+        # 检查错误信息是否包含"Trigger already exists"
+        if re.search(r'Trigger already exists', str(e)):
+            print(f"请假默认状态触发器 '{trigger_name}' 已存在，跳过创建")
+            return True
         print(f"请假默认状态触发器失败: {e}")
         return False
 
 
 def create_leave_update():
-    """创建请假默认状态触发器"""
+    """创建请假更新状态触发器"""
+    trigger_name = "leave_update"
+    
+    # 首先检查触发器是否存在
+    try:
+        with db.engine.begin() as connection:
+            check_sql = text(f"SHOW TRIGGERS LIKE '{trigger_name}'")
+            result = connection.execute(check_sql).fetchall()
+            if result:
+                print(f"请假更新状态触发器 '{trigger_name}' 已存在，跳过创建")
+                return True
+    except Exception as e:
+        print(f"检查请假更新状态触发器是否存在时出错: {e}")
+        # 继续尝试创建，因为在某些MySQL版本中，SHOW TRIGGERS可能有不同的行为
+    
     sql = """
     CREATE TRIGGER leave_update
     BEFORE UPDATE ON Leave_tb
@@ -97,11 +166,29 @@ def create_leave_update():
         print("请假更新状态触发器创建成功")
         return True
     except Exception as e:
+        # 检查错误信息是否包含"Trigger already exists"
+        if re.search(r'Trigger already exists', str(e)):
+            print(f"请假更新状态触发器 '{trigger_name}' 已存在，跳过创建")
+            return True
         print(f"请假更新状态触发器失败: {e}")
         return False
 
 def create_leave_overdue():
     """创建销假状态触发器"""
+    trigger_name = "leave_overdue"
+    
+    # 首先检查触发器是否存在
+    try:
+        with db.engine.begin() as connection:
+            check_sql = text(f"SHOW TRIGGERS LIKE '{trigger_name}'")
+            result = connection.execute(check_sql).fetchall()
+            if result:
+                print(f"请假销假触发器 '{trigger_name}' 已存在，跳过创建")
+                return True
+    except Exception as e:
+        print(f"检查请假销假触发器是否存在时出错: {e}")
+        # 继续尝试创建，因为在某些MySQL版本中，SHOW TRIGGERS可能有不同的行为
+    
     sql = """
     CREATE TRIGGER leave_overdue
     BEFORE UPDATE ON Leave_tb
@@ -129,7 +216,44 @@ def create_leave_overdue():
         print("请假销假触发器创建成功")
         return True
     except Exception as e:
+        # 检查错误信息是否包含"Trigger already exists"
+        if re.search(r'Trigger already exists', str(e)):
+            print(f"请假销假触发器 '{trigger_name}' 已存在，跳过创建")
+            return True
         print(f"请假销假触发器失败: {e}")
+        return False
+
+
+def create_all_triggers():
+    """创建所有触发器的主函数"""
+    print("开始创建所有触发器...")
+    
+    # 触发器函数列表
+    trigger_functions = [
+        create_ad_begin_type,      # 签到触发器
+        create_ad_over_type,       # 签退触发器  
+        create_leave_defaults,     # 请假默认状态触发器
+        create_leave_update,       # 请假更新状态触发器
+        create_leave_overdue       # 销假状态触发器
+    ]
+    
+    success_count = 0
+    total_count = len(trigger_functions)
+    
+    for func in trigger_functions:
+        try:
+            if func():
+                success_count += 1
+        except Exception as e:
+            print(f"执行触发器函数 {func.__name__} 时发生错误: {e}")
+    
+    print(f"触发器创建完成: {success_count}/{total_count} 个触发器创建成功")
+    
+    if success_count == total_count:
+        print("所有触发器创建成功！")
+        return True
+    else:
+        print(f"有 {total_count - success_count} 个触发器创建失败")
         return False
 
 

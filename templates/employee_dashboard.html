@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>员工考勤系统 - 员工主页</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <h1>员工考勤系统</h1>
+            <div class="user-info">
+                <span>欢迎，{{ name }}</span>
+                <a href="/logout" class="logout-btn">退出登录</a>
+            </div>
+        </header>
+        
+        <main class="dashboard-main">
+            <div class="attendance-section">
+                <h2>今日考勤</h2>
+                <div class="attendance-buttons">
+                    <button id="checkinBtn" class="btn-primary">签到</button>
+                    <button id="checkoutBtn" class="btn-secondary">签退</button>
+                </div>
+                <div id="attendanceResult" class="result-message"></div>
+            </div>
+            
+            <div class="leave-section">
+                <h2>请假申请</h2>
+                <form id="leaveForm">
+                    <div class="form-group">
+                        <label for="leaveReason">请假理由</label>
+                        <textarea id="leaveReason" name="reason" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="leaveDays">请假天数</label>
+                        <input type="number" id="leaveDays" name="days" min="1" required>
+                    </div>
+                    <button type="submit" class="btn-primary">提交申请</button>
+                </form>
+                <div id="leaveResult" class="result-message"></div>
+            </div>
+            
+            <div class="attendance-query-section">
+                <h2>考勤查询</h2>
+                <div class="form-group">
+                    <label for="queryMonth">查询月份</label>
+                    <input type="month" id="queryMonth" name="month" required>
+                    <button id="queryBtn" class="btn-secondary">查询</button>
+                </div>
+                <div id="attendanceTableContainer">
+                    <table id="attendanceTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>签到时间</th>
+                                <th>签到情况</th>
+                                <th>签退时间</th>
+                                <th>签退情况</th>
+                                <th>请假情况</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceTableBody">
+                            <!-- 考勤数据将通过JavaScript动态加载 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="leave-list-section">
+                <h2>我的请假记录</h2>
+                <div id="leaveTableContainer">
+                    <table id="leaveTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>申请时间</th>
+                                <th>请假理由</th>
+                                <th>天数</th>
+                                <th>状态</th>
+                                <th>审核时间</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaveTableBody">
+                            <!-- 请假记录将通过JavaScript动态加载 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="{{ url_for('static', filename='js/employee_dashboard.js') }}"></script>
+</body>
+</html>
