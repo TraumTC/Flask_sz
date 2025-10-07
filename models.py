@@ -13,11 +13,11 @@ class Usermodel(db.Model):
     type = db.Column(db.String(8), comment="人员类型（工作人员/管理员）")
 
     # 关联关系：一个用户对应多条考勤记录
-    attendances = db.relationship("Attendance", back_populates="user", cascade="all, delete-orphan")
+    attendances = db.relationship("Attendancemodel", back_populates="user", cascade="all, delete-orphan")
     # 关联关系：一个用户对应多个请假申请（作为申请人）
-    leave_applications = db.relationship("LeaveTb", foreign_keys="[LeaveTb.job_id]", back_populates="applicant")
+    leave_applications = db.relationship("Leavetbmodel", foreign_keys="[Leavetbmodel.job_id]", back_populates="applicant")
     # 关联关系：一个用户对应多个请假审核（作为审核人）
-    handled_leaves = db.relationship("LeaveTb", foreign_keys="[LeaveTb.handler_id]", back_populates="handler")
+    handled_leaves = db.relationship("Leavetbmodel", foreign_keys="[Leavetbmodel.handler_id]", back_populates="handler")
 
     # 约束定义（对应SQL中的CHECK）
     __table_args__ = (
@@ -41,7 +41,7 @@ class Attendancemodel(db.Model):
     over_type = db.Column(db.String(20), comment="签退情况（正常、早退、未签）")
     leave_type=db.Column(db.String(2),comment="请假情况")
     # 关联关系：关联到用户表
-    user = db.relationship("User", back_populates="attendances")
+    user = db.relationship("Usermodel", back_populates="attendances")
 
     __table_args__ =(
         db.CheckConstraint("leave_type in ('是','否')", name="check_leave_type"), #情况限定 是 否
@@ -66,9 +66,9 @@ class Leavetbmodel(db.Model):
     overdue_day = db.Column(db.Integer, comment="逾期天数")
 
     # 关联关系：关联到申请人（用户表）
-    applicant = db.relationship("User", foreign_keys=[job_id], back_populates="leave_applications")
+    applicant = db.relationship("Usermodel", foreign_keys=[job_id], back_populates="leave_applications")
     # 关联关系：关联到审核人（用户表）
-    handler = db.relationship("User", foreign_keys=[handler_id], back_populates="handled_leaves")
+    handler = db.relationship("Usermodel", foreign_keys=[handler_id], back_populates="handled_leaves")
 
     # 约束定义（对应SQL中的CHECK）
     __table_args__ = (

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>员工考勤系统 - 管理员主页</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <h1>员工考勤系统 - 管理后台</h1>
+            <div class="user-info">
+                <span>欢迎，{{ name }}（管理员）</span>
+                <a href="/logout" class="logout-btn">退出登录</a>
+            </div>
+        </header>
+        
+        <main class="dashboard-main">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="employee">员工管理</button>
+                <button class="tab-btn" data-tab="attendance">考勤统计</button>
+                <button class="tab-btn" data-tab="leave">请假审批</button>
+                <button class="tab-btn" data-tab="report">报表导出</button>
+            </div>
+            
+            <!-- 员工管理标签页 -->
+            <div id="employeeTab" class="tab-content active">
+                <div class="tab-header">
+                    <h2>员工管理</h2>
+                    <button id="addEmployeeBtn" class="btn-primary">添加员工</button>
+                </div>
+                
+                <div class="search-bar">
+                    <input type="text" id="employeeSearch" placeholder="搜索工号/姓名/职务">
+                    <button id="searchEmployeeBtn" class="btn-secondary">搜索</button>
+                </div>
+                
+                <div id="employeeTableContainer">
+                    <table id="employeeTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>工号</th>
+                                <th>姓名</th>
+                                <th>性别</th>
+                                <th>职务</th>
+                                <th>类型</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employeeTableBody">
+                            <!-- 员工数据将通过JavaScript动态加载 -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="pagination">
+                    <button id="prevPage" class="btn-secondary">上一页</button>
+                    <span id="pageInfo">第 1 页，共 0 页</span>
+                    <button id="nextPage" class="btn-secondary">下一页</button>
+                </div>
+            </div>
+            
+            <!-- 考勤统计标签页 -->
+            <div id="attendanceTab" class="tab-content">
+                <div class="tab-header">
+                    <h2>考勤统计</h2>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reportMonth">选择月份</label>
+                    <input type="month" id="reportMonth" required>
+                    <button id="generateReportBtn" class="btn-secondary">生成统计</button>
+                </div>
+                
+                <div id="attendanceReportContainer">
+                    <table id="attendanceReportTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>工号</th>
+                                <th>姓名</th>
+                                <th>总天数</th>
+                                <th>正常天数</th>
+                                <th>迟到天数</th>
+                                <th>早退天数</th>
+                                <th>缺勤天数</th>
+                                <th>请假天数</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceReportTableBody">
+                            <!-- 考勤统计数据将通过JavaScript动态加载 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- 请假审批标签页 -->
+            <div id="leaveTab" class="tab-content">
+                <div class="tab-header">
+                    <h2>请假审批</h2>
+                </div>
+                
+                <div id="leaveApprovalContainer">
+                    <table id="leaveApprovalTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>申请时间</th>
+                                <th>申请人</th>
+                                <th>请假理由</th>
+                                <th>天数</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaveApprovalTableBody">
+                            <!-- 请假申请数据将通过JavaScript动态加载 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- 报表导出标签页 -->
+            <div id="reportTab" class="tab-content">
+                <div class="tab-header">
+                    <h2>报表导出</h2>
+                </div>
+                
+                <div class="export-section">
+                    <div class="form-group">
+                        <label for="exportMonth">选择月份</label>
+                        <input type="month" id="exportMonth" required>
+                    </div>
+                    <button id="exportCsvBtn" class="btn-primary">导出CSV</button>
+                    <div id="exportResult" class="result-message"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- 添加/编辑员工模态框 -->
+    <div id="employeeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">添加员工</h3>
+                <span class="close-btn">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="employeeForm">
+                    <input type="hidden" id="editJobId">
+                    <div class="form-group">
+                        <label for="job_id">工号</label>
+                        <input type="text" id="job_id" name="job_id" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">姓名</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">密码</label>
+                        <input type="password" id="password" name="password">
+                        <small>编辑时不填则不修改密码</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">性别</label>
+                        <select id="gender" name="gender" required>
+                            <option value="男">男</option>
+                            <option value="女">女</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="duty">职务</label>
+                        <input type="text" id="duty" name="duty" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="type">用户类型</label>
+                        <select id="type" name="type" required>
+                            <option value="工作人员">工作人员</option>
+                            <option value="管理员">管理员</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="saveEmployeeBtn" class="btn-primary">保存</button>
+                <button id="cancelEmployeeBtn" class="btn-secondary">取消</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 请假详情模态框 -->
+    <div id="leaveDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>请假详情</h3>
+                <span class="close-btn">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="leaveDetailContent">
+                    <!-- 请假详情将通过JavaScript动态加载 -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="approveLeaveBtn" class="btn-primary">批准</button>
+                <button id="rejectLeaveBtn" class="btn-secondary">拒绝</button>
+                <button id="closeLeaveDetailBtn" class="btn-secondary">关闭</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/admin_dashboard.js') }}"></script>
+</body>
+</html>
