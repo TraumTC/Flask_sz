@@ -23,7 +23,7 @@ class Usermodel(db.Model):
     __table_args__ = (
         db.CheckConstraint("gender IN ('男', '女')", name="check_gender"),  # 性别只能是'男'或'女'
         db.CheckConstraint("type IN ('工作人员', '管理员')", name="check_user_type"),  # 人员类型限定
-        {"comment": "用户信息表"}
+        {"mysql_charset": "utf8mb4","comment": "用户信息表"}
     )
 
 
@@ -39,11 +39,13 @@ class Attendancemodel(db.Model):
     begin_type = db.Column(db.String(20), comment="签到情况（正常、迟到、未签）")
     over_date = db.Column(db.DateTime, comment="签退时间")
     over_type = db.Column(db.String(20), comment="签退情况（正常、早退、未签）")
-
+    leave_type=db.Column(db.String(2),comment="请假情况")
     # 关联关系：关联到用户表
     user = db.relationship("User", back_populates="attendances")
 
-    __table_args__ = {"comment": "考勤记录表"}
+    __table_args__ =(
+        db.CheckConstraint("leave_type in ('是','否')", name="check_leave_type"), #情况限定 是 否
+        {"mysql_charset": "utf8mb4","comment": "考勤记录表"})
 
 
 # 请假情况表模型
@@ -71,5 +73,5 @@ class Leavetbmodel(db.Model):
     # 约束定义（对应SQL中的CHECK）
     __table_args__ = (
         db.CheckConstraint("overdue_type IN ('是', '否')", name="check_overdue_type"),  # 逾期情况限定
-        {"comment": "请假情况表"}
+        {"mysql_charset": "utf8mb4","comment": "请假情况表"}
     )
